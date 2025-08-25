@@ -1,115 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trust Earth</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #fff;
-  }
-  .overlay {
-    background-color: rgba(0,0,0,0.6);
-    min-height: 100vh;
-    padding: 20px;
-  }
-  h1 {
-    text-align: center;
-  }
-  .idea {
-    background: rgba(255,255,255,0.1);
-    padding: 10px;
-    border-radius: 8px;
-    margin: 10px 0;
-  }
-  input, textarea {
-    display: block;
-    width: 100%;
-    margin: 5px 0;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    color: black; /* All typed text appears black */
-  }
-  ::placeholder {
-    color: #555;
-    opacity: 1;
-  }
-  button {
-    padding: 8px 12px;
-    margin-top: 5px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .ideas-container {
-    margin-top: 20px;
-  }
-  .oppositions {
-    margin-left: 20px;
-    border-left: 2px solid #fff;
-    padding-left: 10px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trust Earth</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000 url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    header {
+      width: 100%;
+      padding: 60px 20px;
+      text-align: center;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 150, 255, 0.8), 0 0 20px rgba(0, 150, 255, 0.6);
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1.3rem;
+      margin-top: 10px;
+      color: #ddd;
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      header p { font-size: 1rem; }
+    }
+
+    main {
+      padding: 20px;
+      background: rgba(0,0,0,0.5);
+      margin: 20px auto;
+      max-width: 600px;
+      border-radius: 10px;
+    }
+
+    label, input, textarea, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      color: black; /* Ensures all input text is black */
+    }
+
+    button {
+      background: #00aaff;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background: #0088cc;
+    }
+
+    .idea {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+
+    .idea h3 { margin: 0; color: #fff; }
+    .idea p { margin: 5px 0; color: #ccc; }
+
+    .oppositions {
+      margin-top: 10px;
+      padding-left: 15px;
+      border-left: 2px solid #fff;
+    }
+  </style>
 </head>
 <body>
-  <div class="overlay">
+  <header>
     <h1>Trust Earth</h1>
-    <div>
-      <input type="text" id="ideaTitle" placeholder="Enter your idea">
-      <textarea id="ideaDesc" placeholder="Describe your idea"></textarea>
-      <button onclick="addIdea()">Post Idea</button>
-    </div>
-    <div class="ideas-container" id="ideas"></div>
-  </div>
-<script>
-let ideas = JSON.parse(localStorage.getItem('ideas')||'[]');
-renderIdeas();
+    <p>Building trust and connecting ideas across the globe</p>
+  </header>
+  <main>
+    <h2>Post a New Idea</h2>
+    <form id="ideaForm">
+      <input type="text" id="title" placeholder="Your idea title" required>
+      <textarea id="description" placeholder="Describe your idea" required></textarea>
+      <input type="text" id="location" placeholder="Location">
+      <button type="submit">Submit Idea</button>
+    </form>
+    <div id="ideas"></div>
+  </main>
+  <script>
+    const ideaForm = document.getElementById('ideaForm');
+    const ideasContainer = document.getElementById('ideas');
+    let ideas = [];
 
-function addIdea(){
-  const title=document.getElementById('ideaTitle').value.trim();
-  const desc=document.getElementById('ideaDesc').value.trim();
-  if(!title) return;
-  const idea={id:Date.now(),title,desc,oppositions:[]};
-  ideas.push(idea);
-  localStorage.setItem('ideas',JSON.stringify(ideas));
-  document.getElementById('ideaTitle').value='';
-  document.getElementById('ideaDesc').value='';
-  renderIdeas();
-}
+    ideaForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const location = document.getElementById('location').value;
 
-function addOpposition(id){
-  const text=prompt('Enter opposing idea:');
-  if(!text) return;
-  const idea=ideas.find(i=>i.id===id);
-  idea.oppositions.push(text);
-  localStorage.setItem('ideas',JSON.stringify(ideas));
-  renderIdeas();
-}
+      const idea = {
+        title: title,
+        description: description,
+        location: location,
+        oppositions: []
+      };
 
-function renderIdeas(){
-  const container=document.getElementById('ideas');
-  container.innerHTML='';
-  ideas.forEach(i=>{
-    const div=document.createElement('div');
-    div.className='idea';
-    div.innerHTML=`<h3>${i.title}</h3><p>${i.desc}</p><button onclick="addOpposition(${i.id})">Add Opposition</button>`;
-    if(i.oppositions.length){
-      const oppDiv=document.createElement('div');
-      oppDiv.className='oppositions';
-      oppDiv.innerHTML='<h4>Oppositions:</h4>'+i.oppositions.map(o=>`<p>${o}</p>`).join('');
-      div.appendChild(oppDiv);
+      ideas.push(idea);
+      displayIdeas();
+      ideaForm.reset();
+    });
+
+    function displayIdeas() {
+      ideasContainer.innerHTML = '';
+      ideas.forEach((idea, index) => {
+        const div = document.createElement('div');
+        div.className = 'idea';
+        div.innerHTML = `
+          <h3>${idea.title}</h3>
+          <p>${idea.description}</p>
+          <p><em>${idea.location}</em></p>
+          <div class="oppositions">
+            <strong>Opposition Ideas:</strong>
+            ${idea.oppositions.length ? '<ul>' + idea.oppositions.map(o => `<li>${o}</li>`).join('') + '</ul>' : '<p>No opposition ideas yet</p>'}
+            <input type="text" placeholder="Add opposition idea" id="opp-${index}">
+            <button onclick="addOpposition(${index})">Submit Opposition</button>
+          </div>
+        `;
+        ideasContainer.appendChild(div);
+      });
     }
-    container.appendChild(div);
-  });
-}
-</script>
+
+    function addOpposition(index) {
+      const oppInput = document.getElementById(`opp-${index}`);
+      if (oppInput.value.trim() !== '') {
+        ideas[index].oppositions.push(oppInput.value.trim());
+        displayIdeas();
+      }
+    }
+  </script>
 </body>
 </html>
-
