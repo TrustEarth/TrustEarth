@@ -1,146 +1,115 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trust Earth</title>
-  <meta name="description" content="Trust Earth – propose measurable targets, debate respectfully, and build trust." />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    :root { color-scheme: light dark; }
-    ::placeholder {
-    color: #555;        /* dark gray placeholder for contrast */
-    opacity: 1;         /* ensures it shows consistently across browsers */
-}
-
-    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
-    body {
-      background: url('https://eoimages.gsfc.nasa.gov/images/imagerecords/8000/8108/ipcc_bluemarble_west_front.jpg') no-repeat center center fixed;
-      background-size: cover;
-      min-height: 100vh;
-      color: #fff;
-    }
-    .overlay {
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      min-height: 100vh;
-      padding-bottom: 4rem;
-    }
-    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); border-radius: 1rem; padding: 1rem; }
-    h1, h2, h3 { color: #fff; }
-    input, textarea, select, button { border-radius: 0.75rem; }
-    input, textarea, select { padding: 0.75rem; width: 100%; }
-    button { padding: 0.75rem 1.5rem; margin-top: 0.5rem; cursor: pointer; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trust Earth</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+  }
+  .overlay {
+    background-color: rgba(0,0,0,0.6);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+  }
+  .idea {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+  }
+  input, textarea {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: black; /* All typed text appears black */
+  }
+  ::placeholder {
+    color: #555;
+    opacity: 1;
+  }
+  button {
+    padding: 8px 12px;
+    margin-top: 5px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .ideas-container {
+    margin-top: 20px;
+  }
+  .oppositions {
+    margin-left: 20px;
+    border-left: 2px solid #fff;
+    padding-left: 10px;
+  }
+</style>
 </head>
 <body>
   <div class="overlay">
-    <!-- Header -->
-    <header class="max-w-6xl mx-auto px-4 py-6 text-center">
-      <h1 class="text-4xl font-extrabold mb-2">Trust Earth</h1>
-      <p class="text-lg">Propose ideas, connect opposition, build understanding.</p>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 py-6 grid gap-6">
-      <!-- Create New Idea -->
-      <section class="glass">
-        <h2 class="text-2xl font-bold mb-4">Propose a New Idea</h2>
-        <form id="ideaForm" class="grid gap-4">
-          <input type="text" id="ideaTitle" placeholder="Your idea title" required />
-          <textarea id="ideaDescription" placeholder="Describe your idea" rows="3" required></textarea>
-          <input type="text" id="ideaTags" placeholder="Tags (comma separated)" />
-          <button type="submit" class="bg-green-600 text-white font-bold">Post Idea</button>
-        </form>
-      </section>
-
-      <!-- Ideas Feed -->
-      <section id="ideasFeed" class="grid gap-4"></section>
-
-      <!-- Idea Template -->
-      <template id="ideaTemplate">
-        <div class="glass">
-          <h3 class="text-xl font-bold idea-title"></h3>
-          <p class="idea-description mt-1"></p>
-          <div class="flex gap-2 mt-2 idea-tags"></div>
-          <div class="grid md:grid-cols-2 gap-4 mt-4">
-            <div class="pros-section">
-              <h4 class="font-semibold mb-2">Supportive Points</h4>
-              <div class="pros-list"></div>
-              <button class="addPro bg-blue-600 text-white text-sm mt-2">Add Supporting Point</button>
-            </div>
-            <div class="cons-section">
-              <h4 class="font-semibold mb-2">Opposition Points</h4>
-              <div class="cons-list"></div>
-              <button class="addCon bg-red-600 text-white text-sm mt-2">Add Opposition Point</button>
-            </div>
-          </div>
-        </div>
-      </template>
-    </main>
+    <h1>Trust Earth</h1>
+    <div>
+      <input type="text" id="ideaTitle" placeholder="Enter your idea">
+      <textarea id="ideaDesc" placeholder="Describe your idea"></textarea>
+      <button onclick="addIdea()">Post Idea</button>
+    </div>
+    <div class="ideas-container" id="ideas"></div>
   </div>
+<script>
+let ideas = JSON.parse(localStorage.getItem('ideas')||'[]');
+renderIdeas();
 
-  <script>
-    // Simple in-page storage
-    const ideas = [];
+function addIdea(){
+  const title=document.getElementById('ideaTitle').value.trim();
+  const desc=document.getElementById('ideaDesc').value.trim();
+  if(!title) return;
+  const idea={id:Date.now(),title,desc,oppositions:[]};
+  ideas.push(idea);
+  localStorage.setItem('ideas',JSON.stringify(ideas));
+  document.getElementById('ideaTitle').value='';
+  document.getElementById('ideaDesc').value='';
+  renderIdeas();
+}
 
-    const ideaForm = document.getElementById('ideaForm');
-    const ideasFeed = document.getElementById('ideasFeed');
-    const ideaTemplate = document.getElementById('ideaTemplate');
+function addOpposition(id){
+  const text=prompt('Enter opposing idea:');
+  if(!text) return;
+  const idea=ideas.find(i=>i.id===id);
+  idea.oppositions.push(text);
+  localStorage.setItem('ideas',JSON.stringify(ideas));
+  renderIdeas();
+}
 
-    function uid() { return Math.random().toString(36).slice(2)+Date.now().toString(36); }
-
-    function renderIdeas() {
-      ideasFeed.innerHTML = '';
-      for (const idea of ideas) {
-        const node = ideaTemplate.content.firstElementChild.cloneNode(true);
-        node.querySelector('.idea-title').textContent = idea.title;
-        node.querySelector('.idea-description').textContent = idea.description;
-
-        const tagsEl = node.querySelector('.idea-tags');
-        idea.tags.forEach(t => {
-          const span = document.createElement('span');
-          span.textContent = '#' + t;
-          span.className = 'text-sm bg-white/20 px-2 py-1 rounded';
-          tagsEl.appendChild(span);
-        });
-
-        const prosList = node.querySelector('.pros-list');
-        idea.pros.forEach(p => { const div = document.createElement('div'); div.textContent = p.text; div.className='text-sm'; prosList.appendChild(div); });
-        const consList = node.querySelector('.cons-list');
-        idea.cons.forEach(c => { const div = document.createElement('div'); div.textContent = c.text; div.className='text-sm'; consList.appendChild(div); });
-
-        node.querySelector('.addPro').addEventListener('click', ()=>{
-          const text = prompt('Add a supporting point');
-          if (!text) return;
-          idea.pros.push({id: uid(), text});
-          renderIdeas();
-        });
-
-        node.querySelector('.addCon').addEventListener('click', ()=>{
-          const text = prompt('Add an opposition point');
-          if (!text) return;
-          idea.cons.push({id: uid(), text});
-          renderIdeas();
-        });
-
-        ideasFeed.appendChild(node);
-      }
+function renderIdeas(){
+  const container=document.getElementById('ideas');
+  container.innerHTML='';
+  ideas.forEach(i=>{
+    const div=document.createElement('div');
+    div.className='idea';
+    div.innerHTML=`<h3>${i.title}</h3><p>${i.desc}</p><button onclick="addOpposition(${i.id})">Add Opposition</button>`;
+    if(i.oppositions.length){
+      const oppDiv=document.createElement('div');
+      oppDiv.className='oppositions';
+      oppDiv.innerHTML='<h4>Oppositions:</h4>'+i.oppositions.map(o=>`<p>${o}</p>`).join('');
+      div.appendChild(oppDiv);
     }
-
-    ideaForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const title = document.getElementById('ideaTitle').value.trim();
-      const description = document.getElementById('ideaDescription').value.trim();
-      const tags = (document.getElementById('ideaTags').value || '').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
-      if (!title || !description) return;
-      ideas.push({id: uid(), title, description, tags, pros: [], cons: []});
-      ideaForm.reset();
-      renderIdeas();
-    });
-  </script>
+    container.appendChild(div);
+  });
+}
+</script>
 </body>
 </html>
+
