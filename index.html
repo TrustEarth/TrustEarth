@@ -1,144 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Trusted Earth</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #cce0ff, #ffffff);
-    color: #333;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Trusted Earth</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      background: linear-gradient(to bottom, #cce0ff, #ffffff);
+      color: #2c3e50;
+    }
 
-  header {
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 60px 20px;
-    text-align: center;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  }
+    header {
+      position: relative;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
 
-  h1 { margin: 0; font-size: 2.5em; }
-  main {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px;
-  }
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
 
-  .input-section {
-    background-color: #f0f8ff;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
+    header h1, header p {
+      position: relative;
+      z-index: 1;
+    }
 
-  .input-section input,
-  .input-section textarea {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-  }
+    h1 { margin: 0; font-size: 2.8em; }
+    h2, h3 { color: #0052cc; }
 
-  .input-section button {
-    background-color: #0052cc;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-size: 1em;
-    cursor: pointer;
-  }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
 
-  .input-section button:hover {
-    background-color: #003d99;
-  }
+    .input-section {
+      background-color: #f0f8ff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
 
-  .ideas-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+    .input-section input,
+    .input-section textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
 
-  .idea-card {
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    position: relative;
-  }
+    .input-section button {
+      background-color: #0052cc;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+    }
 
-  .idea-card h3 { margin-top: 0; }
+    .input-section button:hover {
+      background-color: #003d99;
+    }
 
-  .idea-meta {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    gap: 10px;
-  }
+    .ideas-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-  .avatar img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #0052cc;
-  }
+    .idea-card {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      position: relative;
+      transition: all 0.3s ease;
+    }
 
-  .vote-buttons {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-  }
+    .idea-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
 
-  .vote-buttons button {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-  }
+    .idea-card h3 { margin-top: 0; }
 
-  .vote-up { background-color: #28a745; color: white; }
-  .vote-down { background-color: #dc3545; color: white; }
+    .idea-meta {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
 
-  .opposing-ideas {
-    margin-top: 15px;
-    border-top: 1px solid #ccc;
-    padding-top: 10px;
-  }
+    .avatar img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #0052cc;
+    }
 
-  .opposing-idea {
-    background-color: #f9f9f9;
-    border-radius: 6px;
-    padding: 10px;
-    margin-top: 8px;
-  }
+    .vote-buttons {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
 
-  footer {
-    text-align: center;
-    padding: 20px;
-    color: #666;
-    font-size: 0.9em;
-  }
-</style>
+    .vote-buttons button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .vote-buttons button span {
+      transition: transform 0.2s ease;
+    }
+
+    .vote-buttons button:active span {
+      transform: scale(1.2);
+    }
+
+    .vote-up { background-color: #28a745; color: white; }
+    .vote-down { background-color: #dc3545; color: white; }
+
+    .opposing-ideas {
+      margin-top: 15px;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+
+    .opposing-idea {
+      background-color: #f9f9f9;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 8px;
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .opposing-idea::before {
+      content: "⚡";
+      position: absolute;
+      left: 8px;
+      top: 10px;
+      color: #dc3545;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
 
 <header>
   <h1>TrustEarth</h1>
-  <p>Share, debate, and connect with others</p>
+  <p><i class="fas fa-globe-americas"></i> Share, debate, and connect with others</p>
 </header>
 
 <main>
   <div class="input-section">
-    <h2>Submit Your Idea</h2>
+    <h2><i class="fas fa-lightbulb"></i> Submit Your Idea</h2>
     <input id="ideaTitle" type="text" placeholder="Title of your idea">
     <textarea id="ideaText" rows="4" placeholder="Describe your idea and a specific measurable target"></textarea>
     <input id="userName" type="text" placeholder="Your name or initials">
@@ -169,7 +215,6 @@
     const card = document.createElement('div');
     card.className = "idea-card";
 
-    // Use pravatar for smiling avatar images
     const avatarUrl = `https://i.pravatar.cc/40?u=${user}`;
 
     card.innerHTML = `
