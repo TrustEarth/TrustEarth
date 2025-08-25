@@ -12,56 +12,130 @@
   <style>
     :root { color-scheme: light dark; }
     html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
-    .glass { backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.55)); }
-    .dark .glass { background: linear-gradient(180deg, rgba(15,15,15,0.75), rgba(15,15,15,0.55)); }
     body {
-      background: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+      background: url('https://images.unsplash.com/photo-1593642532973-d31b6557fa68?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
       background-size: cover;
+      min-height: 100vh;
+      color: #fff;
     }
     .overlay {
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      min-height: 100vh;
+      padding-bottom: 4rem;
     }
-    .dark .overlay {
-      background: rgba(15,15,15,0.7);
-    }
+    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); border-radius: 1rem; padding: 1rem; }
+    h1, h2, h3 { color: #fff; }
+    input, textarea, select, button { border-radius: 0.75rem; }
+    input, textarea, select { padding: 0.75rem; width: 100%; }
+    button { padding: 0.75rem 1.5rem; margin-top: 0.5rem; cursor: pointer; }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 dark:text-slate-100">
-  <div class="overlay min-h-screen">
+<body>
+  <div class="overlay">
     <!-- Header -->
-    <header class="sticky top-0 z-30 glass border-b border-white/30 dark:border-white/10">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-        <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-emerald-400 to-sky-400 grid place-items-center shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white">
-            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 2c1.7 0 3.27.53 4.56 1.42-1.57.3-3.38.5-5.56.5-2.18 0-3.99-.2-5.56-.5A8 8 0 0112 4zm-8 8c0-.69.07-1.36.2-2.01 1.9.37 4.16.61 6.8.61s4.9-.24 6.8-.61c.13.65.2 1.32.2 2.01 0 .69-.07 1.36-.2 2.01-1.9-.37-4.16-.61-6.8-.61s-4.9.24-6.8.61A8.02 8.02 0 014 12zm8 8a8 8 0 01-4.56-1.42c1.57-.3 3.38-.5 5.56-.5 2.18 0 3.99.2 5.56.5A8 8 0 0112 20z"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Trust Earth</h1>
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">Propose measurable targets. Debate respectfully. Build trust.</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="exportBtn" class="px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm shadow">Export</button>
-          <label class="px-3 py-2 rounded-xl bg-slate-200/70 dark:bg-slate-800 text-sm cursor-pointer shadow">
-            <input id="importFile" type="file" accept="application/json" class="hidden" />
-            Import
-          </label>
-          <button id="resetBtn" class="px-3 py-2 rounded-xl bg-rose-600 text-white text-sm shadow">Reset</button>
-        </div>
-      </div>
+    <header class="max-w-6xl mx-auto px-4 py-6 text-center">
+      <h1 class="text-4xl font-extrabold mb-2">Trust Earth</h1>
+      <p class="text-lg">Propose ideas, connect opposition, build understanding.</p>
     </header>
 
-    <!-- Main content remains unchanged -->
-    <main class="max-w-6xl mx-auto px-4 py-6 grid gap-6">
-      <!-- All previous sections and scripts remain the same -->
-    </main>
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6 grid gap-6">
+      <!-- Create New Idea -->
+      <section class="glass">
+        <h2 class="text-2xl font-bold mb-4">Propose a New Idea</h2>
+        <form id="ideaForm" class="grid gap-4">
+          <input type="text" id="ideaTitle" placeholder="Your idea title" required />
+          <textarea id="ideaDescription" placeholder="Describe your idea" rows="3" required></textarea>
+          <input type="text" id="ideaTags" placeholder="Tags (comma separated)" />
+          <button type="submit" class="bg-green-600 text-white font-bold">Post Idea</button>
+        </form>
+      </section>
 
-    <footer class="max-w-6xl mx-auto px-4 pb-10 text-xs text-slate-500">
-      <p>Made with care for building trust. Data stored locally on your device.</p>
-    </footer>
+      <!-- Ideas Feed -->
+      <section id="ideasFeed" class="grid gap-4"></section>
+
+      <!-- Idea Template -->
+      <template id="ideaTemplate">
+        <div class="glass">
+          <h3 class="text-xl font-bold idea-title"></h3>
+          <p class="idea-description mt-1"></p>
+          <div class="flex gap-2 mt-2 idea-tags"></div>
+          <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <div class="pros-section">
+              <h4 class="font-semibold mb-2">Supportive Points</h4>
+              <div class="pros-list"></div>
+              <button class="addPro bg-blue-600 text-white text-sm mt-2">Add Supporting Point</button>
+            </div>
+            <div class="cons-section">
+              <h4 class="font-semibold mb-2">Opposition Points</h4>
+              <div class="cons-list"></div>
+              <button class="addCon bg-red-600 text-white text-sm mt-2">Add Opposition Point</button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </main>
   </div>
+
+  <script>
+    // Simple in-page storage
+    const ideas = [];
+
+    const ideaForm = document.getElementById('ideaForm');
+    const ideasFeed = document.getElementById('ideasFeed');
+    const ideaTemplate = document.getElementById('ideaTemplate');
+
+    function uid() { return Math.random().toString(36).slice(2)+Date.now().toString(36); }
+
+    function renderIdeas() {
+      ideasFeed.innerHTML = '';
+      for (const idea of ideas) {
+        const node = ideaTemplate.content.firstElementChild.cloneNode(true);
+        node.querySelector('.idea-title').textContent = idea.title;
+        node.querySelector('.idea-description').textContent = idea.description;
+
+        const tagsEl = node.querySelector('.idea-tags');
+        idea.tags.forEach(t => {
+          const span = document.createElement('span');
+          span.textContent = '#' + t;
+          span.className = 'text-sm bg-white/20 px-2 py-1 rounded';
+          tagsEl.appendChild(span);
+        });
+
+        const prosList = node.querySelector('.pros-list');
+        idea.pros.forEach(p => { const div = document.createElement('div'); div.textContent = p.text; div.className='text-sm'; prosList.appendChild(div); });
+        const consList = node.querySelector('.cons-list');
+        idea.cons.forEach(c => { const div = document.createElement('div'); div.textContent = c.text; div.className='text-sm'; consList.appendChild(div); });
+
+        node.querySelector('.addPro').addEventListener('click', ()=>{
+          const text = prompt('Add a supporting point');
+          if (!text) return;
+          idea.pros.push({id: uid(), text});
+          renderIdeas();
+        });
+
+        node.querySelector('.addCon').addEventListener('click', ()=>{
+          const text = prompt('Add an opposition point');
+          if (!text) return;
+          idea.cons.push({id: uid(), text});
+          renderIdeas();
+        });
+
+        ideasFeed.appendChild(node);
+      }
+    }
+
+    ideaForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('ideaTitle').value.trim();
+      const description = document.getElementById('ideaDescription').value.trim();
+      const tags = (document.getElementById('ideaTags').value || '').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+      if (!title || !description) return;
+      ideas.push({id: uid(), title, description, tags, pros: [], cons: []});
+      ideaForm.reset();
+      renderIdeas();
+    });
+  </script>
 </body>
 </html>
-
-
