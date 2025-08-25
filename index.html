@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Trusted Earth</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #cce0ff, #ffffff);
+    color: #333;
+  }
+
+  header {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+
+  h1 { margin: 0; font-size: 2.5em; }
+  main {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  .input-section {
+    background-color: #f0f8ff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .input-section input,
+  .input-section textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+  }
+
+  .input-section button {
+    background-color: #0052cc;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  .input-section button:hover {
+    background-color: #003d99;
+  }
+
+  .ideas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .idea-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative;
+  }
+
+  .idea-card h3 { margin-top: 0; }
+
+  .idea-meta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+
+  .avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #0052cc;
+  }
+
+  .vote-buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .vote-buttons button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .vote-up { background-color: #28a745; color: white; }
+  .vote-down { background-color: #dc3545; color: white; }
+
+  .opposing-ideas {
+    margin-top: 15px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+  }
+
+  .opposing-idea {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 8px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>TrustEarth</h1>
+  <p>Share, debate, and connect with others</p>
+</header>
+
+<main>
+  <div class="input-section">
+    <h2>Submit Your Idea</h2>
+    <input id="ideaTitle" type="text" placeholder="Title of your idea">
+    <textarea id="ideaText" rows="4" placeholder="Describe your idea and a specific measurable target"></textarea>
+    <input id="userName" type="text" placeholder="Your name or initials">
+    <button onclick="submitIdea()">Submit Idea</button>
+  </div>
+
+  <div id="ideasContainer" class="ideas-container">
+    <!-- Ideas will appear here -->
+  </div>
+</main>
+
+<footer>
+  &copy; 2025 Our Trusted Earth. All rights reserved.
+</footer>
+
+<script>
+  function submitIdea() {
+    const title = document.getElementById('ideaTitle').value;
+    const text = document.getElementById('ideaText').value;
+    const user = document.getElementById('userName').value || "User";
+
+    if (!title || !text) {
+      alert("Please enter a title and description for your idea.");
+      return;
+    }
+
+    const container = document.getElementById('ideasContainer');
+    const card = document.createElement('div');
+    card.className = "idea-card";
+
+    // Use pravatar for smiling avatar images
+    const avatarUrl = `https://i.pravatar.cc/40?u=${user}`;
+
+    card.innerHTML = `
+      <div class="idea-meta">
+        <div class="avatar"><img src="${avatarUrl}" alt="User Avatar"></div>
+        <strong>${user}</strong>
+      </div>
+      <h3>${title}</h3>
+      <p>${text}</p>
+      <div class="vote-buttons">
+        <button class="vote-up" onclick="vote(this, 1)">👍 <span>0</span></button>
+        <button class="vote-down" onclick="vote(this, -1)">👎 <span>0</span></button>
+        <button onclick="addOpposing(this)">Add Opposing Idea</button>
+      </div>
+      <div class="opposing-ideas"></div>
+    `;
+
+    container.prepend(card);
+
+    document.getElementById('ideaTitle').value = "";
+    document.getElementById('ideaText').value = "";
+    document.getElementById('userName').value = "";
+  }
+
+  function vote(button, value) {
+    const span = button.querySelector("span");
+    span.textContent = parseInt(span.textContent) + value;
+  }
+
+  function addOpposing(button) {
+    const ideaText = prompt("Enter the opposing idea:");
+    if (!ideaText) return;
+    const opposingContainer = button.closest(".idea-card").querySelector(".opposing-ideas");
+
+    const opposingDiv = document.createElement("div");
+    opposingDiv.className = "opposing-idea";
+    opposingDiv.textContent = opposingContainer.children.length + 1 + ". " + ideaText;
+
+    opposingContainer.appendChild(opposingDiv);
+  }
+</script>
+
+</body>
+</html>
